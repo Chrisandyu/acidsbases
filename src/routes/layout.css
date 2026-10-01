@@ -1,0 +1,84 @@
+@import 'tailwindcss';
+
+/* Catppuccin Latte*/
+@theme static {
+	--font-sans: 'Cascadia Code Variable', monospace;
+
+	--color-rosewater: #dc8a78;
+	--color-flamingo: #dd7878;
+	--color-pink: #ea76cb;
+	--color-mauve: #8839ef;
+	--color-red: #d20f39; /* H3O+ */
+	--color-maroon: #e64553;
+	--color-peach: #fe640b; /* conjugate base */
+	--color-yellow: #df8e1d;
+	--color-green: #40a02b;
+	--color-teal: #179299;
+	--color-sky: #04a5e5;
+	--color-sapphire: #209fb5;
+	--color-blue: #1e66f5; /* OH- */
+	--color-lavender: #7287fd;
+
+	--color-text: #4c4f69;
+	--color-subtext1: #5c5f77;
+	--color-subtext0: #6c6f85;
+
+	--color-overlay2: #7c7f93;
+	--color-overlay1: #8c8fa1;
+	--color-overlay0: #9ca0b0;
+
+	--color-surface2: #acb0be;
+	--color-surface1: #bcc0cc;
+	--color-surface0: #ccd0da;
+
+	--color-base: #eff1f5;
+	--color-mantle: #e6e9ef;
+	--color-crust: #dce0e8;
+
+	/* Lighter and darker versions of each accent (mixed with white / black) */
+	--color-rosewater-light: #eec4bc;
+	--color-flamingo-light: #eebcbc;
+	--color-pink-light: #f4bae5;
+	--color-mauve-light: #c49cf7;
+	--color-red-light: #e8879c;
+	--color-maroon-light: #f2a2a9;
+	--color-peach-light: #feb285;
+	--color-yellow-light: #efc68e;
+	--color-green-light: #a0d095;
+	--color-teal-light: #8bc8cc;
+	--color-sky-light: #82d2f2;
+	--color-sapphire-light: #90cfda;
+	--color-blue-light: #8eb2fa;
+	--color-lavender-light: #b8c3fe;
+
+	--color-rosewater-dark: #9a6154;
+	--color-flamingo-dark: #9b5454;
+	--color-pink-dark: #a4538e;
+	--color-mauve-dark: #5f28a7;
+	--color-red-dark: #930a28;
+	--color-maroon-dark: #a1303a;
+	--color-peach-dark: #b24608;
+	--color-yellow-dark: #9c6314;
+	--color-green-dark: #2d701e;
+	--color-teal-dark: #10666b;
+	--color-sky-dark: #0373a0;
+	--color-sapphire-dark: #166f7f;
+	--color-blue-dark: #1547ac;
+	--color-lavender-dark: #505eb1;
+}
+
+@layer base {
+	html {
+		scrollbar-color: var(--color-surface1) transparent;
+	}
+	body {
+		@apply bg-base text-text antialiased;
+	}
+}
+
+/* Charges in text, matching the ones on molecules: black with a soft yellow glow */
+.charge {
+	color: black;
+	font-weight: 700;
+	text-shadow: 0 0 4px color-mix(in oklab, var(--color-yellow-light) 70%, transparent);
+}

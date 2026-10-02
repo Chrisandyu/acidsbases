@@ -1,42 +1,31 @@
-# sv
+# Acids... and also bases
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+what else is there to say?
 
-## Creating a project
+## Structure
 
-If you're seeing this, you've probably already done this step. Congrats!
+AP Chem, based off [Brown et al. CH 16 and 17](<https://chem.libretexts.org/Bookshelves/General_Chemistry/Map%3A_Chemistry_-_The_Central_Science_(Brown_et_al.)>)
 
-```sh
-# create a new project
-npx sv create my-app
-```
+Organised into modules, each one teaches a topic (listed in `src/lib/modules.ts`)
 
-To recreate this project with the same configuration:
+Each screen is its a component at `src/lib/screens/<module>/<screen>.svelte` with format `/<module>/<screen>`
 
-```sh
-# recreate this project
-npx sv@0.17.1 create --template minimal --types ts --add prettier tailwindcss="plugins:none" --install npm .
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+## Dev
 
 ```sh
 npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
 ```
 
-## Building
+Nothing will be production ready or mobile friendly until the site is completed
 
-To create a production version of your app:
+Theme is mostly [Catppuccin Latte](https://catppuccin.com/palette/)
 
-```sh
-npm run build
-```
+Current dev tools are at `/builder` and `/palette` urls
 
-You can preview the production build with `npm run preview`.
+## Questions that are unanswered
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+1. How do we make acids and bases easy to understand and not take forever
+2. How do we let students rigourously prove the math and theory behind acids and bases themselves
+3. How do we make it interactive
+4. How do we incorporate real world phenomena and technology
+5. How do we make it look good - is simple better????

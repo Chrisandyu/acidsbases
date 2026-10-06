@@ -15,7 +15,8 @@ export const modules: Module[] = [
 		screens: [
 			{ slug: 'whathappening', title: 'What they do' },
 			{ slug: 'conjugate', title: 'Conjugate pairs' },
-			{ slug: 'lol2', title: 't they do' }
+			{ slug: 'autoionisation', title: 'Autoionisation' },
+			{ slug: 'ph', title: 'pH' }
 		]
 	},
 	{

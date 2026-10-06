@@ -20,7 +20,8 @@
 	paint-order="stroke"
 	style="filter: drop-shadow(0 0 3px color-mix(in oklab, var(--color-yellow-light) 50%, transparent))"
 	class="select-none"
-	transition:fade|global={{ duration: 300 }}
+	in:fade|global={{ duration: 300 }}
+	out:fade={{ duration: 300 }}
 >
 	{text}
 </text>

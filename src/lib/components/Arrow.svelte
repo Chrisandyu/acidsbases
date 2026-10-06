@@ -1,9 +1,9 @@
 <script lang="ts">
-	/** reversible: a forward harpoon over a shorter reverse one (⇌). Otherwise a plain → */
+	// reversible = ⇌ (shorter reverse harpoon), otherwise plain →
 	let { reversible = false }: { reversible?: boolean } = $props();
 </script>
 
-<!-- Switching reversible animates: the forward arrow lifts, loses its lower barb, and the reverse slides in -->
+<!-- on reversible: forward arrow lifts + loses bottom barb, reverse slides in -->
 <svg
 	viewBox="0 0 64 28"
 	class="w-16"

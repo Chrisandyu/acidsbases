@@ -1,16 +1,13 @@
 const isLetter = (c: string) => c.toLowerCase() !== c.toUpperCase();
 const isDigit = (c: string) => c >= '0' && c <= '9';
 const isCharge = (c: string) => c === '+' || c === '−' || c === '-';
-/** End of a word: end of the text, a space, or punctuation */
-const isWordEnd = (c: string | undefined) => c === undefined || ' .,;:!?)'.includes(c);
+const isWordEnd = (c: string | undefined) => c === undefined || ' .,;:!?)]('.includes(c); // brackets so [H3O+] and OH−(aq) work
 
-/**
- * Turns plain formulas in text into HTML sub/superscripts.
- * Digits after a letter or ")" become subscripts: H2O → H₂O, NH4+ → NH₄⁺.
- * A + or − at the end of a word becomes a superscript: H3O+ → H₃O⁺, Cl− → Cl⁻.
- * ^ makes the rest of the word a superscript, for charges with a number: Ca^2+ → Ca²⁺, CO3^2− → CO₃²⁻.
- * HTML tags are copied as they are, so you can mix in things like <b class="text-red">.
- */
+// plain formulas -> sub/superscripts for chem formulas
+// numbers after a letter or ) are sub H2O -> H₂O
+// + or - at end of a word is sup: Cl− → Cl⁻
+// ^ makes rest of word sup: Ca^2+ → Ca²⁺
+// html tags are left alone so you can use @html
 export function chem(text: string): string {
 	let html = '';
 	let i = 0;

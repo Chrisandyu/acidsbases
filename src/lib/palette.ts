@@ -1,4 +1,3 @@
-/** Accent colors from layout.css */
 export const accents = [
 	'rosewater',
 	'flamingo',
@@ -17,7 +16,6 @@ export const accents = [
 ] as const;
 export type Accent = (typeof accents)[number];
 
-/** Every color an atom can use: accents, their light and dark versions, and the greys */
 export const colors = [
 	...accents,
 	...accents.map((a) => `${a}-light` as const),
@@ -31,7 +29,6 @@ export const colors = [
 ] as const;
 export type Color = (typeof colors)[number];
 
-/** Pale version of an accent, for backgrounds */
 export function tint(color: Accent): string {
 	return `color-mix(in oklab, var(--color-${color}) 18%, var(--color-base))`;
 }

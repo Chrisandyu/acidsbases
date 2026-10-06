@@ -13,7 +13,7 @@
 	let charge = $state('');
 	let selected = $state<{ type: 'atom' | 'bond'; i: number } | null>(null);
 
-	//
+
 	let draft = $state<{ symbol: string; r: number; color: Color }>({
 		symbol: '',
 		r: 15,
@@ -171,7 +171,7 @@
 
 		<Molecule {atoms} {bonds} {charge} />
 
-		<!-- invis shapes for clickyt -->
+		<!-- invis shapes for clicky -->
 		{#if mode === 'atoms'}
 			{#each bonds as bond, i (i)}
 				<line

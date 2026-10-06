@@ -16,7 +16,7 @@
 	const hcl = { x: 130, y: 80 };
 	const water = { x: 260, y: 80 };
 
-	// The proton's path: start on HCl, pop off a little up-right, then arc over to water's O
+	// proton path: starts on HCl, go  top right, arc to water O
 	const start = { x: hcl.x + proton.x, y: hcl.y + proton.y };
 	const loose = { x: start.x + 12, y: start.y - 8 };
 	const end = { x: water.x + oxygen.x, y: water.y + oxygen.y - 32 };

@@ -8,7 +8,7 @@
 		y: number;
 		r: number;
 		color: Color;
-		/** Charge on this atom, shown like a superscript: H+ or Cl− */
+		// atom charge like H+ or Cl−
 		charge?: string;
 	};
 
@@ -47,7 +47,7 @@
 	</text>
 
 	{#if charge}
-		<!-- Just right of the symbol, raised like a superscript -->
+		<!-- right of symbol, raised like superscript -->
 		<Charge text={charge} x={r * (0.28 * symbol.length + 0.3)} y={-r * 0.4} size={r * 0.75} />
 	{/if}
 </g>

@@ -1,5 +1,8 @@
 @import 'tailwindcss';
 
+/* short: for laptop screens, things get squished below 800px tall */
+@custom-variant short (@media (max-height: 800px));
+
 /* Catppuccin Latte*/
 @theme static {
 	--font-sans: 'Cascadia Code Variable', monospace;
@@ -35,7 +38,7 @@
 	--color-mantle: #e6e9ef;
 	--color-crust: #dce0e8;
 
-	/* Lighter and darker versions of each accent (mixed with white / black) */
+	/* light and dark version of each accent, mixed w white / black */
 	--color-rosewater-light: #eec4bc;
 	--color-flamingo-light: #eebcbc;
 	--color-pink-light: #f4bae5;
@@ -76,7 +79,7 @@
 	}
 }
 
-/* Charges in text, matching the ones on molecules: black with a soft yellow glow */
+/* charges in text, same as molecule ones. black w soft yellow glow */
 .charge {
 	color: black;
 	font-weight: 700;

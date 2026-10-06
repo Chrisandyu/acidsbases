@@ -8,7 +8,7 @@
 	// get all files in src/lib/screens
 	const screens = import.meta.glob<Component>('/src/lib/screens/*/*.svelte', {
 		import: 'default',
-		eager: true //
+		eager: true //important but i forgot why
 	});
 	//import component with filepath being the key
 
@@ -22,7 +22,8 @@
 <svelte:head><title>{module.screens[step].title}</title></svelte:head>
 
 <div class="flex h-dvh flex-col overflow-hidden" style:background-color={tint(module.color)}>
-	<header class="flex items-start justify-between gap-8 px-10 pt-8">
+	<!-- z-10 so screens can put stuff (like water) behind header + footer -->
+	<header class="relative z-10 flex items-start justify-between gap-8 px-10 pt-8">
 		<div class="space-y-1">
 			<a href="/" class="text-subtext0 hover:text-text">{module.title}</a>
 			<h1 class="text-4xl font-bold">{module.screens[step].title}</h1>
@@ -43,7 +44,7 @@
 		<Content />
 	</main>
 
-	<footer class="flex justify-between px-10 pb-8">
+	<footer class="relative z-10 flex justify-between px-10 pb-8">
 		<Button href={screenUrls[i - 1] ?? '/'} variant="ghost">← Back</Button>
 		<Button href={screenUrls[i + 1] ?? '/'} color={module.color}>Next →</Button>
 	</footer>

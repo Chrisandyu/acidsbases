@@ -68,7 +68,7 @@
 <!-- top: false when the question text is its own line above -->
 {#snippet question(key: Key, before: string, wrong = 'not quite', top = true, feedback = true)}
 	<form
-		class="flex flex-wrap items-center gap-3 text-red-dark"
+		class="flex flex-wrap items-center gap-3 text-red"
 		onsubmit={(e) => {
 			e.preventDefault();
 			checked[key] = true;
@@ -104,11 +104,11 @@
 
 <BeakerPour {beaker} fill={fills[dilutions]} pH={shownPH.current} />
 
-<!-- z-10 so the water is behind everything -->
+<!-- WATER -->
 <div class="relative z-10 flex h-full w-full gap-12 short:gap-8">
-	<!-- left: concentration, beaker, table. fixed width so nothing shifts as it changes -->
+	<!--fixed width-->
 	<div class="flex w-[30rem] shrink-0 flex-col items-center gap-4 short:w-[26rem] short:gap-2">
-		<!-- mol / volume = concentration, volume grows ×10 each dilution -->
+		<!-- mol / volume = concentration-->
 		<div class="flex items-center gap-3 text-xl text-black short:text-lg">
 			<span class="flex flex-col items-center leading-tight">
 				<span>{@html chem(`${mol} mol H3O+`)}</span>
@@ -123,9 +123,9 @@
 			<b>{decimal(1 + dilutions)} M</b>
 		</div>
 
-		<!-- beaker centred over the table, button under it -->
+		<!-- beaker w/btn -->
 		<div class="flex flex-col items-center gap-3 short:gap-2">
-			<!-- glass only, the water inside is drawn by BeakerPour behind it -->
+			<!-- black glass -->
 			<svg
 				bind:this={beaker}
 				viewBox="0 0 160 190"
@@ -151,8 +151,8 @@
 			</div>
 		</div>
 
-		<!-- widths fit the longest row from the start so the table never grows -->
-		<table class="mt-4 text-3xl short:mt-0 short:text-lg">
+		<!-- sss -->
+		<table class="mt-4 text-3xl short:mt-2 short:text-lg">
 			<colgroup>
 				<col style:width="calc(9ch + 2rem)" />
 				<col style:width="calc(7ch + 2rem)" />
@@ -170,11 +170,12 @@
 					<tr in:fade={{ duration: 400 }}>
 						<td class="px-4 font-semibold tabular-nums">{row.conc}</td>
 						<!-- power + pH go red together, a row at a time from the top -->
-						<td
-							class="px-4 transition-colors duration-500 {step >= 1 ? 'text-red' : ''}"
-							style:transition-delay="{i * 250}ms"
-						>
-							10<sup>{row.power}</sup>
+						<!-- only the power goes red, not the 10 -->
+						<td class="px-4">
+							10<sup
+								class="transition-colors duration-500 {step >= 1 ? 'text-red' : ''}"
+								style:transition-delay="{i * 250}ms">{row.power}</sup
+							>
 						</td>
 						<td
 							class="px-4 font-bold transition-colors duration-500 {step >= 1 ? 'text-red' : ''}"
@@ -194,9 +195,9 @@
 		bind:this={scroller}
 		class="min-w-0 flex-1 overflow-y-auto [mask-image:linear-gradient(to_bottom,transparent,black_1.5rem)] pt-4 pr-2 pb-6 text-2xl leading-relaxed text-black short:text-lg"
 	>
-		<div bind:this={content} class="flex flex-col gap-3 short:gap-2">
+		<div bind:this={content} class="flex flex-col gap-3">
 			<p>
-				{@html chem('Suppose [H3O+] in a solution 0.1 M. An acid probably did this.<br>')}
+				{@html chem('Suppose a solution has [H3O+] = 0.1 M. An acid probably did this.<br>')}
 				Watch the <b>pH</b> as you do 10x dilutions.
 			</p>
 			<hr class="divider" />
@@ -214,7 +215,7 @@
 				<div in:fade class="flex flex-col gap-3">
 					<p>
 						{@html chem(
-							'pH is the <b>power of 10</b>, but with the sign flipped: 10<sup>−4</sup> M → pH 4.'
+							'pH is the <b>power of 10</b> with the sign reversed: 10<sup>−4</sup> M → pH 4.'
 						)}
 					</p>
 					<p>
@@ -226,7 +227,7 @@
 						'count the dilutions in between'
 					)}
 					{#if solved('times')}
-						{@render correct('')}
+						{@render correct('Three tenfold dilutions gets you from pH 1 to 4 (10*10*10 = 1000)')}
 						<hr class="divider" />
 					{/if}
 				</div>
@@ -237,18 +238,15 @@
 				<div in:fade class="flex flex-col gap-3">
 					<p class="text-3xl short:text-2xl">{@html chem('<b>pH = −log[H3O+]</b>')}</p>
 					<p class="text-lg text-subtext0 short:text-[1rem]">
-						{@html chem(
-							'[H3O+] is usually abbreviated as [H+]<br>pH is really −log([H3O+] / 1 M), because you can’t take the log of something with units.'
-						)}
+						{@html chem('[H3O+] is usually abbreviated as [H+]')}
 					</p>
+					<!--<br>pH is really −log([H3O+] / 1 M), because you can’t take the log of something with units. -->
 					<p><b>log(x)</b>: <i>10 to what power is equal to x?</i></p>
 					{@render question('log', 'log(0.001) =')}
 					{#if solved('log')}
 						{@render correct('log(0.001) = log(10<sup>−3</sup>) = −3')}
 						<hr class="divider" />
-						<p in:fade class="text-red-dark">
-							Find the pH of a 0.0000000000000000000001 M solution.
-						</p>
+						<p in:fade class="text-red">Find the pH of a 0.0000000000000000000001 M solution.</p>
 						{@render question('ph6', 'pH =', 'not quite', false)}
 					{/if}
 					{#if solved('ph6')}
@@ -261,8 +259,8 @@
 			<!-- in-between values -->
 			{#if solved('ph6')}
 				<div in:fade class="flex flex-col gap-3">
-					<p>Concentrations are almost never exact powers of 10.</p>
-					<p class="text-red-dark">{@html chem('[H+] = 0.003 M. Its pH is between…')}</p>
+					<p>Concentrations usually arent't exact powers of 10.</p>
+					<p class="text-red">{@html chem('[H+] = 0.003 M. Its pH is between…')}</p>
 					<div class="flex flex-wrap items-center gap-3">
 						{#each ranges as r (r)}
 							<Button
@@ -282,7 +280,7 @@
 						{@render correct(
 							'0.003 is between 0.01 (10<sup>−2</sup>) and 0.001 (10<sup>−3</sup>), so its pH is between 2 and 3.'
 						)}
-						<p in:fade class="mt-4 text-red-dark">Use a calculator to find the exact pH:</p>
+						<p in:fade class="mt-4 text-red">Use a calculator to find the exact pH:</p>
 						{@render question('calc', 'pH =', 'not quite', false)}
 					{/if}
 					{#if solved('calc')}
@@ -298,8 +296,8 @@
 					<p>{@html chem('Bases are similar: <b>pOH = −log[OH−]</b>')}</p>
 					<p class="mt-4">
 						{@html chem('K<sub>w</sub> = [H3O+][OH−] = 1.0 × 10<sup>−14</sup> at 25 °C.')}
-						<span class="text-red-dark">What is pH + pOH?</span>
 					</p>
+					<p class="text-red">What is pH + pOH always equal to?</p>
 					{@render question('sum', 'pH + pOH =', 'not quite', false, false)}
 					<!-- hint -->
 					{#if hint}

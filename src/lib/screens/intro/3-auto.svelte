@@ -146,11 +146,11 @@
 			<span>{@html chem('[H3O+][OH−]')}</span>
 			<span>=</span>
 			<b>1.0 × 10<sup>−14</sup></b>
-			<span class="text-xl text-subtext0 short:text-lg mx-3">at 25 °C</span>
+			<span class="mx-3 text-xl text-subtext0 short:text-lg">at 25 °C</span>
 		</div>
 
-		<p class="line text-xl text-subtext0 short:text-lg mt-4" class:hidden-line={lines < 3}>
-			The reason pure solids and liquids have concentration 1M is
+		<p class="line mt-4 text-xl text-subtext0 short:text-lg" class:hidden-line={lines < 3}>
+			The reason pure solids and liquids are 1 is
 			<a
 				href="https://new.scielo.br/j/qn/a/FrbFh3xX7KL3DjrThWcTBgc/?format=html&lang=en&ilang=en"
 				target="_blank"

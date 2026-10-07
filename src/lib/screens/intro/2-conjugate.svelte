@@ -23,7 +23,7 @@
 	let step = $state(0);
 	const solved = $derived(step > 0);
 	// can only skip after answering and before the end
-	const canSkip = $derived(solved && step < 9);
+	const canSkip = $derived(step >= 2 && step < 9);
 
 	// time between stepS (ms on step n before going to n + 1)
 	const holds = [0, 3000, 2500, 6000, 1000, 5000, 1000, 3700, 4500];

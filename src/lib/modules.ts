@@ -15,8 +15,10 @@ export const modules: Module[] = [
 		screens: [
 			{ slug: 'whathappening', title: 'What they do' },
 			{ slug: 'conjugate', title: 'Conjugate pairs' },
-			{ slug: 'autoionisation', title: 'Autoionisation' },
-			{ slug: 'ph', title: 'pH' }
+			{ slug: 'auto', title: 'Autoionisation' },
+			{ slug: 'ph', title: 'pH' },
+			{ slug: 'scale', title: 'pH scale' },
+			{ slug: 'quiz', title: 'Quiz' }
 		]
 	},
 	{
@@ -51,5 +53,5 @@ export const modules: Module[] = [
 	}
 ];
 
-/** all screen url list */
+// all screen url list
 export const screenUrls = modules.flatMap((m) => m.screens.map((s) => `/${m.slug}/${s.slug}`));

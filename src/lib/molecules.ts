@@ -50,5 +50,13 @@ export const molecules = {
 			{ symbol: 'O', x: 0, y: -6, r: 22, color: 'red' },
 			{ symbol: 'H', x: 24, y: -24, r: 15, color: 'lavender' }
 		]
-	}
+  },
+	ammonia: {
+  	atoms: [
+  		{ symbol: 'H', x: 0, y: -31, r: 14, color: 'lavender' },
+  		{ symbol: 'H', x: -27, y: 12, r: 14, color: 'lavender' },
+  		{ symbol: 'H', x: 28, y: 12, r: 14, color: 'lavender' },
+  		{ symbol: 'N', x: 0, y: 0, r: 22, color: 'teal' }
+  	]
+  }
 } satisfies Record<string, ComponentProps<typeof Molecule>>;

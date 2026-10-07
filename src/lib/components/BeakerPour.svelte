@@ -2,6 +2,7 @@
 	import { untrack } from 'svelte';
 	import { b2World, b2PolygonShape, b2EdgeShape, type XY } from '@box2d/core';
 	import { b2ParticleSystemDef, b2ParticleGroupDef, b2ParticleFlag } from '@box2d/particles';
+	import { phStops } from '$lib/palette';
 
 	type Props = {
 		// the beaker svg, viewBox 0 0 160 190, glass from (30, 40) down to y 182 and across to x 130
@@ -13,8 +14,6 @@
 
 	let { beaker, fill, pH }: Props = $props();
 
-	const ppm = 100; // px per box2d meter
-	const radius = 5; // px per particle
 	const res = 0.5; // the water is drawn at half res, the browser smooths it back out
 	const rim = 40; // beaker units
 	const floor = 179.5; // inside of the bottom
@@ -34,15 +33,6 @@
 	let poured = 0;
 	let liquid = [0, 0, 0];
 
-	// red acid, green neutral, purple base
-	const stops: [number, string][] = [
-		[0, 'red'],
-		[3, 'peach'],
-		[5, 'yellow'],
-		[7, 'green'],
-		[10, 'blue'],
-		[14, 'mauve']
-	];
 	function rgb(name: string) {
 		const hex = getComputedStyle(document.documentElement)
 			.getPropertyValue(`--color-${name}`)
@@ -50,9 +40,12 @@
 		return [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
 	}
 	function indicator(p: number) {
-		const i = stops.findIndex(([at]) => at > p);
-		const [a, ca] = stops[i - 1];
-		const [b, cb] = stops[i];
+		const i = Math.max(
+			1,
+			phStops.findIndex(([at]) => at >= p)
+		);
+		const [a, ca] = phStops[i - 1];
+		const [b, cb] = phStops[i];
 		const t = (p - a) / (b - a);
 		const [x, y] = [rgb(ca), rgb(cb)];
 		// 70% colour, 30% white like the old beaker fill
@@ -77,6 +70,10 @@
 		if (!w || !beaker) return;
 		const box = beaker.getBoundingClientRect();
 		const scale = box.width / 160;
+		// px per box2d meter + particle size go with the beaker so the water acts the same on any screen
+		// (100 and 5px at the normal 256px wide beaker)
+		const ppm = box.width / 2.56;
+		const radius = 0.05 * ppm;
 		// beaker units -> box2d meters
 		const at = (x: number, y: number): XY => ({
 			x: (box.left + x * scale) / ppm,
@@ -173,12 +170,12 @@
 		const drainX = W / 2;
 		const drainY = H;
 		const below = box.bottom / ppm; // anything lower than the beaker is spill
-		let drain = 0; // 0 = closed, 1 = fully open
+		let drain = 0; // 0 closed 1 open
 
 		function step() {
 			t += 1 / 60;
 			if (pending > 0) {
-				// big pours get a wider stream
+				// big pour =  wide stream
 				width ||= Math.min(6, Math.max(3, Math.ceil(pending / 150)));
 				const row = Math.min(width, pending);
 				const wobble = Math.sin(t * 6) * 0.4 * d;
@@ -206,14 +203,16 @@
 				for (let i = 0; i < n; i++) {
 					const p = pos[i];
 					if (p.y < below) continue;
-					// gone once it's well off the page
+					// gone once it's off the page
 					if (p.y > H + 0.5) {
 						water.DestroyParticle(i);
 						continue;
 					}
+					// make sure drain don't pull past floor
+					if (p.y > drainY) continue;
 					const dx = drainX - p.x;
 					const dy = drainY - p.y;
-					// slow drift along the floor everywhere, strong pull up close
+					// scuffed gravity
 					const dist = Math.hypot(dx, dy) || 0.01;
 					const near = Math.max(0, 1 - dist / 2.5);
 					vel[i].x += (Math.sign(dx) * 0.04 + (dx / dist) * 0.3 * near) * drain;
@@ -259,10 +258,9 @@
 		let solution = blob(liquid);
 		let solutionColor = liquid;
 
-		// alpha in -> alpha out: under ~40% gone, over ~60% solid, smooth ramp between
+		// alpha in -> alpha out: between under 40% gone over ~60% solid
 		const edge = new Uint8ClampedArray(256);
 		for (let i = 0; i < 256; i++) edge[i] = ((i / 255 - 0.4) / 0.2) * 235;
-
 
 		let raf = 0;
 		let then = performance.now();
@@ -272,7 +270,7 @@
 			then = now;
 			for (; behind >= 1000 / 60; behind -= 1000 / 60) step();
 
-			// remake the solution dot when colour changes
+			// recolour solution dots
 			if (liquid !== solutionColor) {
 				solution = blob(liquid);
 				solutionColor = liquid;
@@ -296,7 +294,7 @@
 				y1 = Math.max(y1, y * res + r);
 			}
 
-			// only touch the pixels around the water
+			// only touch pixels around the water
 			if (x1 > x0) {
 				const bx = Math.max(0, Math.floor(x0));
 				const by = Math.max(0, Math.floor(y0));
@@ -308,7 +306,7 @@
 				ctx.putImageData(img, bx, by);
 			}
 
-			// hole goes behind the water so water slides over it before dropping in
+			// hole goes behind water
 			if (drain > 0.05) {
 				ctx.globalCompositeOperation = 'destination-over';
 				ctx.fillStyle = 'black';
@@ -339,5 +337,5 @@
 
 <svelte:window onresize={resize} />
 
-<!-- fixed behind the whole page, the screen sits above it with relative z-10 -->
+<!-- the entire page -->
 <canvas bind:this={canvas} class="pointer-events-none fixed inset-0 h-full w-full"></canvas>

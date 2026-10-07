@@ -6,11 +6,14 @@
 	import { tint } from '$lib/palette';
 
 	// get all files in src/lib/screens
-	const screens = import.meta.glob<Component>('/src/lib/screens/*/*.svelte', {
+	const files = import.meta.glob<Component>('/src/lib/screens/*/*.svelte', {
 		import: 'default',
 		eager: true //important but i forgot why
 	});
-	//import component with filepath being the key
+	//import component with filepath being the key, number prefix dropped (intro/2-conjugate -> intro/conjugate)
+	const screens = Object.fromEntries(
+		Object.entries(files).map(([path, c]) => [path.replace(/\/\d+-/, '/'), c])
+	);
 
 	const url = $derived(page.url.pathname); //http://localhost:5173/hello/hi
 	const module = $derived(modules.find((m) => m.slug === page.params.module)!);
@@ -26,7 +29,9 @@
 	<header class="relative z-10 flex items-start justify-between gap-8 px-10 pt-8">
 		<div class="space-y-1">
 			<a href="/" class="text-subtext0 hover:text-text">{module.title}</a>
-			<h1 class="text-4xl font-bold">{module.screens[step].title}</h1>
+			<h1 class="text-4xl font-bold">
+				<a href="/" class="hover:text-subtext1">{module.screens[step].title}</a>
+			</h1>
 		</div>
 		<div class="flex gap-2 pt-2">
 			{#each module.screens as screen, j (screen.slug)}

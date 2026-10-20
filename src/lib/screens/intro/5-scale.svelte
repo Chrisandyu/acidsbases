@@ -11,7 +11,8 @@
 	import bleach from '$lib/assets/bleach.png';
 	import drain from '$lib/assets/draincleaner.png';
 
-	// icon is an emoji/image from assets. small shrinks the image
+	// icon is an emoji/image from assets. small shrinks img
+	// MAKE SMALL NUM LATER
 	type Thing = {
 		name: string;
 		pH: number;
@@ -21,6 +22,7 @@
 		up: boolean;
 	};
 
+	//can't believe emojis don't look half bad
 	const things: Thing[] = [
 		{ name: 'battery acid', pH: 0.8, icon: '🔋', up: false },
 		{ name: 'stomach acid', pH: 1.5, icon: stomach, img: true, up: true },
@@ -46,12 +48,13 @@
 	let ended = $state(false);
 	const shown = $derived(ended ? [hcl, ...things] : things);
 
-	// left end of the scale, goes to −2 at the end to make room under 0
+	//tween for transition
 	const lo = new Tween(0, { duration: 1500, easing: cubicInOut });
-	const blocks = Array.from({ length: 17 }, (_, i) => i - 2);
-	const span = $derived(15 - lo.current);
+	// -2 to 14
+	const blocks = Array.from({ length: 17 }, (ihateacidsandbases, i) => i - 2);
+	const numBlocks = $derived(15 - lo.current);
 	// pH -> %, each number is in the middle oif its block
-	const at = (p: number) => ((p - lo.current + 0.5) / span) * 100;
+	const at = (p: number) => ((p - lo.current + 0.5) / numBlocks) * 100;
 
 	const marker = new Tween(7, { duration: 800, easing: cubicInOut });
 	const pH = $derived(marker.current);
@@ -69,11 +72,12 @@
 	let bar = $state<HTMLDivElement>();
 	let dragging = false;
 	function drag(e: PointerEvent) {
-		const box = bar!.getBoundingClientRect();
-		move(((e.clientX - box.left) / box.width) * span + lo.current - 0.5, 0);
+		const box = bar.getBoundingClientRect();
+		move(((e.clientX - box.left) / box.width) * numBlocks + lo.current - 0.5, 0);
 	}
 
-	// end: scale grows left, then the marker goes off the bottom to HCl
+	// end: scale grows left
+	// move marker to HCl
 	async function end() {
 		ended = true;
 		await lo.set(-2);
@@ -81,29 +85,25 @@
 	}
 
 	const h = $derived(10 ** -pH);
+	//pOH = 14-PH
+	// 10^-pH = 10^(-(14-pH))
 	const oh = $derived(10 ** (pH - 14));
 
-	// whole number, 3 sig figs then zeros
-	function full(n: number) {
-		const digits = Math.floor(Math.log10(n)) + 1;
-		if (digits <= 3) return Math.round(n).toLocaleString();
-		return (
-			BigInt(Math.round(n / 10 ** (digits - 3))) *
-			10n ** BigInt(digits - 3)
-		).toLocaleString();
-	}
-	// H3O+ : OH−, 2 sig figs
+	// H3O+ : OH-
 	function ratio() {
 		const r = h / oh;
-		const two = (n: number) => full(Number(n.toPrecision(2)));
+		//2 sf, remove sci notation, add commas
+		const two = (n: number) => Number(n.toPrecision(2)).toLocaleString();
 		return r >= 1 ? `${two(r)} : 1` : `1 : ${two(1 / r)}`;
 	}
 </script>
 
+<!--items(things) on bar
+snippet > component justifiable??
+-->
 {#snippet thing(t: Thing)}
 	<button
 		in:fade={{ duration: 600 }}
-		onclick={() => move(t.pH)}
 		style:left="{at(t.pH)}%"
 		style:--c={phColor(t.pH)}
 		class="absolute flex w-24 -translate-x-1/2 items-center gap-1 select-none short:w-20 {t.up
@@ -123,6 +123,7 @@
 					class="object-contain {t.small ? 'size-8 short:size-6' : 'size-10 short:size-7'}"
 				/>
 			{:else}
+			<!--emoji -->
 				{t.icon}
 			{/if}
 		</span>
@@ -135,11 +136,12 @@
 		style:background-color={phColor(pH)}
 		class="w-44 rounded-2xl py-3 text-center text-4xl font-bold text-white tabular-nums shadow-sm short:w-32 short:py-1.5 short:text-2xl"
 	>
+	 <!--1 digit after deicmal -->
 		pH {pH.toFixed(1)}
 	</div>
 
 	<div class="relative w-full">
-		<!-- above bar -->
+		<!-- icons above bar -->
 		<div class="relative h-32 short:h-20">
 			{#each shown.filter((t) => t.up) as t (t.name)}
 				{@render thing(t)}
@@ -159,34 +161,36 @@
 			role="presentation"
 			onpointerdown={(e) => {
 				dragging = true;
-				bar!.setPointerCapture(e.pointerId);
+				bar.setPointerCapture(e.pointerId);
 				drag(e);
 			}}
-			onpointermove={(e) => dragging && drag(e)}
+			onpointermove={(e) => dragging &&  drag(e)}
 			onpointerup={() => (dragging = false)}
 			class="relative h-16 cursor-ew-resize touch-none select-none short:h-10"
 		>
 			<div class="absolute inset-0 overflow-hidden rounded-xl">
 				{#each blocks as n (n)}
+				<!--x pos: centre - half a block
+				width is 100%/blocks-->
 					<div
-						style:left="{at(n) - 50 / span}%"
-						style:width="{100 / span}%"
+						style:left="{at(n) - 50 / numBlocks}%"
+						style:width="{100 / numBlocks}%"
 						style:background-color={phColor(n)}
 						class="absolute inset-y-0 grid place-items-center text-3xl font-bold text-white short:text-xl"
 					>
-						{String(n).replace('-', '−')}
+						{String(n)}
 					</div>
 				{/each}
 			</div>
 			<!-- marker -->
 			<div
 				style:left="{at(pH)}%"
-				style:width="{100 / span}%"
+				style:width="{100 / numBlocks}%"
 				class="pointer-events-none absolute inset-y-0 -translate-x-1/2 rounded-lg border-4 border-black"
 			></div>
 		</div>
 
-		<!-- below the bar -->
+		<!-- icons below the bar -->
 		<div class="relative h-32 short:h-20">
 			{#each shown.filter((t) => !t.up) as t (t.name)}
 				{@render thing(t)}
@@ -197,24 +201,26 @@
 	<!-- H3O vs OH ratio  -->
 	<div class="mt-4 flex w-2/3 flex-col items-center gap-2 short:gap-1">
 		<div class="flex h-6 w-full overflow-hidden rounded-full short:h-4">
+		    <!--ratio of h to h+oh -->
 			<div style:width="{(h / (h + oh)) * 100}%" class="bg-red"></div>
 			<div class="flex-1 bg-blue"></div>
 		</div>
 		<p class="text-3xl whitespace-nowrap text-black tabular-nums short:text-xl">
-			<!-- label -->
-			<b class="text-red">{@html chem('H3O+')}</b> : <b class="text-blue">{@html chem('OH−')}</b> =
+			<!-- rest is red -->
+			<b class="text-red">{@html chem('H3O+')}</b> : <b class="text-blue">{@html chem('OH-')}</b> =
 			{ratio()}
 		</p>
 	</div>
 
 	<div class="min-h-24 w-full text-xl text-black short:min-h-16 short:text-[1rem]">
-		{#if !ended}
+	    {#if !ended}
 			{#if moved}
+			    <!-- not clicked and not moved -->
 				<div in:fade class="flex justify-center">
 					<Button variant="ghost" size="sm" onclick={end}>→</Button>
 				</div>
 			{:else}
-				<p class="text-center text-lg text-subtext0 short:text-sm">drag the marker to move on</p>
+				<p class="text-center text-lg text-subtext1">drag the marker to move on</p>
 			{/if}
 		{:else}
 			<div in:fade={{ delay: 1500 }} class="flex flex-col gap-2 short:gap-1">
@@ -223,7 +229,7 @@
 						'Concentrated HCl is 12 M (pH = −log(12) = <text class="text-red-dark">−1.1</text>)'
 					)}
 				</p>
-				<p class="text-lg text-subtext0 short:text-sm">
+				<p class="text-lg text-subtext1 short:text-sm">
 					Interesting case: superacids like magic acid (and also superbases) are so strong you can’t use the pH scale
 					<br />We use the Hammett acidity function instead because of water's leveling effect
 				</p>

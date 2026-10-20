@@ -3,15 +3,15 @@
 	import { fade } from 'svelte/transition';
 	import Arrow from '$lib/components/Arrow.svelte';
 
-	const formulas = ['HCl', 'H2O', 'Cl−', 'H3O+'];
+	const formulas = ['HCl', 'H2O', 'Cl-', 'H3O+'];
 
-	let acid = $state<number | null>(null);
-	let base = $state<number | null>(null);
+	let acid = $state(null);
+	let base = $state(null);
 	let wrong = $state(false);
 
 	// steps:
 	// 0: asking
-	// 1: correct, H3O+ acid, Cl- base, → turns into ⇌
+	// 1: correct, H3O+ acid, Cl- base, single arrow turns into double
 	// 2: remember HCl was acid
 	// 3: and H2O was base
 	// 4: mauve line draws + caption
@@ -26,16 +26,16 @@
 	const canSkip = $derived(step >= 2 && step < 9);
 
 	// time between stepS (ms on step n before going to n + 1)
-	const holds = [0, 3000, 2500, 6000, 1000, 5000, 1000, 3700, 4500];
+	const holds = [0, 2000, 2500, 6000, 1000, 5000, 1000, 3700, 4500];
 
-	let timer: ReturnType<typeof setTimeout>;
+	let timer;
 	$effect(() => () => clearTimeout(timer));
 
 	// jump to step n
 	function goTo(n: number, manual = false) {
 		clearTimeout(timer);
 		step = n;
-		// after a manual skip wait 15s before going on by itself
+		// after a manual skip wait 15s before going on by itself else normal
 		if (n < 9) timer = setTimeout(() => goTo(n + 1), manual ? 15000 : holds[n]);
 	}
 
@@ -51,6 +51,7 @@
 			acid = null;
 		} else {
 			base = i;
+			//correct
 			if (acid === 3 && base === 2) goTo(1);
 			else miss();
 		}
@@ -67,7 +68,7 @@
 	}
 
 	// red = acid, blue = base
-	// step 0: whatever they picked
+	// step 0: make whatever they picked red then blue
 	// step 1+: H3O+ acid + Cl- base, HCl acid from 2, H2O base from 3
 	function roleOf(i: number) {
 		if (step === 0) return i === acid ? 'red' : i === base ? 'blue' : null;
@@ -86,7 +87,7 @@
 		return null;
 	}
 
-	// tile fill + outline + text color for formula
+	// returns tile fill + outline + text color for formula
 	// change to pair colors (step 5 mauve, step 7 peach)
 	function look(i: number) {
 		const pair = pairOf(i);
@@ -127,9 +128,11 @@
 		<p class="mt-4 text-subtext0">A conjugate pair is two molecules that differ by one H+</p>`;
 </script>
 
+<!--flip: true= concave up, false=concave down -->
 {#snippet line(drawn: boolean, color: string, flip: boolean)}
 	<!-- middle of one tile to middle of tile two over: 5 + 5 + 10 + 7 + 5 = 32rem. draws itself when drawn turns true -->
 	<svg viewBox="0 0 512 20" class="h-5 w-[32rem]">
+	<!-- you got this -->
 		<path
 			d={flip
 				? 'M2 2 V14 Q2 18 6 18 H506 Q510 18 510 14 V2'
@@ -149,8 +152,9 @@
 <!-- click anywhere to skip a step -->
 <svelte:window onclick={skip} />
 
+
 <div class="relative h-full w-full {canSkip ? 'cursor-pointer' : ''}">
-	<!-- parent container: shrinks to top half for text at step 9, shrink more on short screens -->
+	<!-- formula container, shrink from 125%-100 after step 9 -->
 	<div
 		class="flex items-center justify-center transition-[height] duration-700 ease-out {step >= 9
 			? 'h-1/2'
@@ -161,7 +165,7 @@
 				? '[@media(max-height:800px)]:scale-80'
 				: 'scale-125'}"
 		>
-			<!-- question (0), correct (1), pair caption (4-7). shrink at step 9 so top half has room -->
+			<!-- question (0), correct (1), pair caption (4-7). also shrink aftger 9 -->
 			<p
 				class="text-2xl transition-[opacity,height,margin] duration-300 {step >= 9
 					? 'mb-0 h-0 opacity-0 duration-700'
@@ -186,8 +190,9 @@
 				{/if}
 			</p>
 
+
 			<div class="grid grid-cols-[10rem_5rem_10rem_7rem_10rem_5rem_10rem] items-end">
-				<!-- remember notes: HCl one at step 2-3, H2O one at step 3 -->
+				<!-- HCl one at step 2-3, H2O one at step 3 -->
 				<p
 					class="col-start-1 row-start-1 mb-3 justify-self-center whitespace-nowrap transition-opacity duration-500 {step ===
 						2 || step === 3
@@ -204,7 +209,7 @@
 				>
 					{@html chem('…and H2O was the base')}
 				</p>
-				<!-- top: mauve line draws at step 4, conjugate pair word at step 8 -->
+				<!-- top: mauve line draws at step 4, "conjugate pair" label at step 8 -->
 				<div class="col-span-5 col-start-1 row-start-1 mb-2 flex flex-col items-center">
 					<span
 						class="font-semibold text-mauve transition-opacity duration-300 {step >= 8
@@ -327,7 +332,7 @@
 					? ''
 					: 'opacity-0'}"
 			>
-				click to skip frame
+				click = manual advance
 			</p>
 		</div>
 	</div>

@@ -2,6 +2,8 @@
 	import type { Snippet } from 'svelte';
 	import type { Accent } from '$lib/palette';
 
+	//optional chaining
+	//
 	type Props = {
 		href?: string;
 		onclick?: () => void;
@@ -21,6 +23,7 @@
 	}: Props = $props();
 
 	//CREDIT: https://github.com/codrops/CreativeButtons/blob/master/css/component.css
+	// devious tailwind blubs cause im lazy
 	const style = $derived(
 		variant === 'solid'
 			? `--fill: color-mix(in oklab, var(--color-${color}), black 12%); --lip: color-mix(in oklab, var(--color-${color}), black 28%)`

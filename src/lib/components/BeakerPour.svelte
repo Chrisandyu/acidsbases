@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { untrack } from 'svelte';
-	import { b2World, b2PolygonShape, b2EdgeShape, type XY } from '@box2d/core';
+	import { b2World, b2PolygonShape, b2EdgeShape } from '@box2d/core';
 	import { b2ParticleSystemDef, b2ParticleGroupDef, b2ParticleFlag } from '@box2d/particles';
 	import { phStops } from '$lib/palette';
 
@@ -75,7 +75,7 @@
 		const ppm = box.width / 2.56;
 		const radius = 0.05 * ppm;
 		// beaker units -> box2d meters
-		const at = (x: number, y: number): XY => ({
+		const at = (x: number, y: number) => ({
 			x: (box.left + x * scale) / ppm,
 			y: (box.top + y * scale) / ppm
 		});
@@ -151,8 +151,8 @@
 
 		// the mouse drags nearby water along with it. no solid ball, so nothing to teleport
 		// or crawl back when the mouse leaves and returns
-		let mouse: XY | null = null;
-		let last: XY | null = null;
+		let mouse = null;
+		let last = null;
 		const onMove = (e: PointerEvent) => (mouse = { x: e.clientX / ppm, y: e.clientY / ppm });
 		window.addEventListener('pointermove', onMove);
 
@@ -239,15 +239,15 @@
 		// drawing: soft coloured dots at half res, then anything faint is cut and anything dense
 		// goes solid, so the dots merge into one continuous body of water. the canvas is
 		// stretched to full size by the browser, which smooths the edge
-		canvas!.width = Math.ceil(w * res);
-		canvas!.height = Math.ceil(h * res);
-		const ctx = canvas!.getContext('2d', { willReadFrequently: true })!;
+		canvas.width = Math.ceil(w * res);
+		canvas.height = Math.ceil(h * res);
+		const ctx = canvas.getContext('2d', { willReadFrequently: true });
 
 		const r = radius * 2.6 * res;
 		function blob(c: number[]) {
 			const b = document.createElement('canvas');
 			b.width = b.height = Math.ceil(r * 2);
-			const bctx = b.getContext('2d')!;
+			const bctx = b.getContext('2d');
 			const g = bctx.createRadialGradient(r, r, 0, r, r, r);
 			g.addColorStop(0, `rgba(${c.join()},1)`);
 			g.addColorStop(1, `rgba(${c.join()},0)`);
@@ -278,7 +278,7 @@
 
 			const n = water.GetParticleCount();
 			const pos = water.GetPositionBuffer();
-			ctx.clearRect(0, 0, canvas!.width, canvas!.height);
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
 			let x0 = Infinity;
 			let y0 = Infinity;
 			let x1 = -Infinity;
@@ -298,8 +298,8 @@
 			if (x1 > x0) {
 				const bx = Math.max(0, Math.floor(x0));
 				const by = Math.max(0, Math.floor(y0));
-				const bw = Math.min(canvas!.width, Math.ceil(x1)) - bx;
-				const bh = Math.min(canvas!.height, Math.ceil(y1)) - by;
+				const bw = Math.min(canvas.width, Math.ceil(x1)) - bx;
+				const bh = Math.min(canvas.height, Math.ceil(y1)) - by;
 				const img = ctx.getImageData(bx, by, bw, bh);
 				const a = img.data;
 				for (let i = 3; i < a.length; i += 4) a[i] = edge[a[i]];

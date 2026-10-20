@@ -1,4 +1,5 @@
 <script lang="ts">
+    //code is same as 1
 	import { Tween } from 'svelte/motion';
 	import { cubicInOut } from 'svelte/easing';
 	import Atom from '$lib/components/Atom.svelte';
@@ -69,7 +70,7 @@
 	let surface = $state<HTMLDivElement>();
 	let level = $state(0);
 	function measure() {
-		level = surface!.getBoundingClientRect().top;
+		level = surface.getBoundingClientRect().top;
 	}
 	$effect(measure);
 
@@ -89,7 +90,8 @@
 
 <WaterField {level} />
 
-<div class="relative z-10 flex h-full w-full flex-col">
+<!-- z-67 soooooo -->
+<div class="relative z-67 flex h-full w-full flex-col">
 	<!-- anim centered .above water-->
 	<div class="flex justify-center">
 		<svg
@@ -116,14 +118,14 @@
 		<p class="line" class:hidden-line={lines < 1}>Water can steal a proton from itself</p>
 		<p class="line" class:hidden-line={lines < 1}>
 			{@html chem(
-				'<b class="text-red">H2O</b>(l) + <b class="text-blue">H2O</b>(l) ⇌ H3O+(aq) + OH−(aq)'
+				'<b class="text-red">H2O</b>(l) + <b class="text-blue">H2O</b>(l) ⇌ H3O+(aq) + OH-(aq)'
 			)}
 		</p>
 		<p class="line mt-15" class:hidden-line={lines < 2}>
 			In pure water, <b>2 in every billion</b> molecules are ionised at equilibrium
 		</p>
 
-		<!-- K = [H3O+][OH−] / [H2O] , then cross out denom-->
+		<!-- K = [H3O+][OH-] / [H2O] , then cross out denom-->
 		<div
 			class="line mt-6 flex items-center gap-4 text-4xl short:mt-0 short:text-3xl"
 			class:hidden-line={lines < 3}
@@ -131,7 +133,7 @@
 			<span class="font-bold">K</span>
 			<span>=</span>
 			<span class="relative flex flex-col items-center">
-				<span>{@html chem('[H3O+][OH−]')}</span>
+				<span>{@html chem('[H3O+][OH-]')}</span>
 				<span class="relative border-t-2 border-black px-2">
 					{@html chem('[H2O]<sup>2</sup>')}
 					<span
@@ -143,7 +145,7 @@
 				</span>
 			</span>
 			<span>=</span>
-			<span>{@html chem('[H3O+][OH−]')}</span>
+			<span>{@html chem('[H3O+][OH-]')}</span>
 			<span>=</span>
 			<b>1.0 × 10<sup>−14</sup></b>
 			<span class="mx-3 text-xl text-subtext0 short:text-lg">at 25 °C</span>

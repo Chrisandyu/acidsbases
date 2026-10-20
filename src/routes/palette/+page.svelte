@@ -1,16 +1,20 @@
 <script lang="ts">
 	import css from '../layout.css?raw';
 	import Button from '$lib/components/Button.svelte';
-	import IceTable from '$lib/components/IceTable.svelte';
 	import { modules } from '$lib/modules';
 	import { tint } from '$lib/palette';
 
+	//--color-rosewater: #dc8a78;
 	const colors = css
 		.split('\n')
+		//leadinng trailing spacce/tab
 		.map((line) => line.trim())
 		.filter((line) => line.startsWith('--color-'))
 		.map((line) => {
+
+		    //split first/second half into array
 			const [name, value] = line.slice('--color-'.length).split(':');
+			//remove whitespace and semicolon
 			return { name, hex: value.split(';')[0].trim() };
 		});
 </script>
@@ -45,11 +49,4 @@
 		<Button color="blue">Base</Button>
 		<Button variant="ghost">Ghost</Button>
 	</section>
-
-	<IceTable
-		species={['CH₃COOH', 'H₃O⁺', 'CH₃COO⁻']}
-		initial={['0.10', '0', '0']}
-		change={['−x', '+x', '+x']}
-		equilibrium={['0.10 − x', 'x', 'x']}
-	/>
 </main>

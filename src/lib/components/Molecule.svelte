@@ -10,7 +10,7 @@
 	type Props = {
 		atoms: ComponentProps<typeof Atom>[];
 		bonds?: Bond[];
-		/** NET MOLECULE CHARGE */
+		// NET MOLECULE CHARGE
 		charge?: string;
 		chargeAt?: { x: number; y: number };
 		x?: number;
@@ -20,9 +20,10 @@
 
 	let { atoms, bonds = [], charge, chargeAt, x = 0, y = 0, scale = 1 }: Props = $props();
 
-	//charge
+
 	const right = $derived(Math.max(...atoms.map((a) => a.x + a.r)));
 	const top = $derived(Math.min(...atoms.map((a) => a.y - a.r)));
+	//charge location top right
 	const at = $derived(chargeAt ?? { x: right + 4, y: top - 2 });
 
 	function lines(b: Bond) {
@@ -33,7 +34,7 @@
 		return offsets.map((o) => ({
 			x1: b.x1 + nx * o,
 			y1: b.y1 + ny * o,
-			x2: b.x2 + nx * o,
+			x2: b    .x2 + nx * o,
 			y2: b.y2 + ny * o
 		}));
 	}

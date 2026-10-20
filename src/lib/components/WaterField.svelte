@@ -28,7 +28,7 @@
 		const height = new Float32Array(count);
 		const speed = new Float32Array(count);
 
-		// null until the mouse first moves, so it doesn't jump in from nowhere on page load
+		// null until the mouse first moves, so it dont jump in from nowhere on page load
 		let mouse: { x: number; y: number } | null = null;
 		let last: { x: number; y: number } | null = null;
 		const onMove = (e: PointerEvent) => (mouse = { x: e.clientX, y: e.clientY });
@@ -36,7 +36,8 @@
 		window.addEventListener('pointermove', onMove);
 
 		function step() {
-			// mouse in the water drags the surface with it: down pushes, up lifts, sideways makes a bow wave
+			// mouse in the water drags the surface with it
+			// down up pushes sideways makes a wave
 			if (mouse && last) {
 				const dx = clamp(mouse.x - last.x, maxMove);
 				const dy = clamp(mouse.y - last.y, maxMove);
@@ -55,7 +56,7 @@
 				speed[i] = (speed[i] - spring * height[i]) * damping;
 				height[i] = clamp(height[i] + speed[i], maxHeight);
 			}
-			// two passes so waves travel a bit faster
+			// no clue wha this does
 			for (let pass = 0; pass < 2; pass++) {
 				for (let i = 0; i < count; i++) {
 					const left = height[Math.max(0, i - 1)];
@@ -66,9 +67,9 @@
 		}
 
 		const dpr = window.devicePixelRatio;
-		canvas!.width = w * dpr;
-		canvas!.height = h * dpr;
-		const ctx = canvas!.getContext('2d')!;
+		canvas.width = w * dpr;
+		canvas.height = h * dpr;
+		const ctx = canvas.getContext('2d');
 		ctx.scale(dpr, dpr);
 
 		const edge = getComputedStyle(document.documentElement)
@@ -79,7 +80,7 @@
 		fill.addColorStop(0, `${edge}40`);
 		fill.addColorStop(1, `${edge}73`);
 
-		// physics runs at 60 steps a second no matter the screen's refresh rate
+		// physics runs at 60 fps
 		let raf = 0;
 		let then = performance.now();
 		let behind = 0;
@@ -125,5 +126,5 @@
 
 <svelte:window onresize={resize} />
 
-<!-- fixed behind the whole page, the screen's own stuff sits above it with relative z-10 -->
+<!-- screen is rel z-10-->
 <canvas bind:this={canvas} class="pointer-events-none fixed inset-0 h-full w-full"></canvas>

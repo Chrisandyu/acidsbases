@@ -1,17 +1,18 @@
 @import 'tailwindcss';
 
-/* short: for laptop screens, things get squished below 800px tall */
+/* short: for laptop screens = below 800px tall */
 @custom-variant short (@media (max-height: 800px));
 
-/* Catppuccin Latte*/
+/* Catppuccin latte*/
 @theme static {
 	--font-sans: 'Cascadia Code Variable', monospace;
 
+	/* so why does css not accept british colour but i can use british grey */
 	--color-rosewater: #dc8a78;
 	--color-flamingo: #dd7878;
 	--color-pink: #ea76cb;
-	--color-mauve: #8839ef;
-	--color-red: #d20f39; /* H3O+ */
+	--color-mauve: #8839ef;/* conjugate acid */
+	--color-red: #d20f39;
 	--color-maroon: #e64553;
 	--color-peach: #fe640b; /* conjugate base */
 	--color-yellow: #df8e1d;
@@ -19,7 +20,7 @@
 	--color-teal: #179299;
 	--color-sky: #04a5e5;
 	--color-sapphire: #209fb5;
-	--color-blue: #1e66f5; /* OH- */
+	--color-blue: #1e66f5;
 	--color-lavender: #7287fd;
 
 	--color-text: #4c4f69;
@@ -38,7 +39,7 @@
 	--color-mantle: #e6e9ef;
 	--color-crust: #dce0e8;
 
-	/* light and dark version of each accent, mixed w white / black */
+	/* light and dark version of each accent */
 	--color-rosewater-light: #eec4bc;
 	--color-flamingo-light: #eebcbc;
 	--color-pink-light: #f4bae5;
@@ -79,7 +80,7 @@
 	}
 }
 
-/* charges in text, same as molecule ones. black w soft yellow glow */
+/* charges in text (same as molecule one) black w/ soft yellow glow */
 .charge {
 	color: black;
 	font-weight: 700;

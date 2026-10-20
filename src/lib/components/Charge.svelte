@@ -6,6 +6,7 @@
 	let { text, x, y, size }: Props = $props();
 </script>
 
+<!--charge w/ yellow glow -->
 <text
 	{x}
 	{y}

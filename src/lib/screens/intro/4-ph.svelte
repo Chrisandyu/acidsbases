@@ -8,12 +8,12 @@
 	// 0: dilute (need pH 4 to go on), 1: everything else
 	let step = $state(0);
 
-	// 0.01 mol of H3O+
 	const mol = 0.01;
 	let dilutions = $state(0);
 	const maxDilutions = 5;
 	const litres = $derived(0.1 * 10 ** dilutions);
 
+	//add decimals!
 	const decimal = (n: number) => '0.' + '0'.repeat(n - 1) + '1';
 
 	// how full the beaker is after each dilution (1 = rim)
@@ -29,14 +29,19 @@
 		calc: (v: number) => v >= 2.5 && v <= 2.53,
 		sum: (v: number) => v === 14
 	};
+
+	//weird ts notation but ok
 	type Key = keyof typeof checks;
+
 	const answers = $state({ times: '', log: '', ph6: '', calc: '', sum: '' });
+	//is check pressed
 	const checked = $state({ times: false, log: false, ph6: false, calc: false, sum: false });
-	const right = (key: Key) => checks[key](Number(answers[key].replace('−', '-')));
+	const right = (key: Key) => checks[key](Number(answers[key]));
 	const solved = (key: Key) => checked[key] && right(key);
 
 	// multiple choice
 	const ranges = ['1 and 2', '2 and 3', '3 and 4'];
+	//the btn that was picked
 	let range = $state<string | null>(null);
 
 	let hint = $state(false);
@@ -46,7 +51,9 @@
 	const shownPH = Tween.of(() => pH, { duration: 1500 });
 
 	const rows = $derived(
-		Array.from({ length: dilutions + 1 }, (_, i) => ({
+		//make array representation of table
+		// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/from
+		Array.from({ length: dilutions + 1 }, (nothingtoseehere, i) => ({
 			conc: decimal(i + 1),
 			power: `−${i + 1}`,
 			pH: `${i + 1}`
@@ -58,24 +65,28 @@
 	let content = $state<HTMLDivElement>();
 	$effect(() => {
 		const watch = new ResizeObserver(() =>
-			scroller!.scrollTo({ top: scroller!.scrollHeight, behavior: 'smooth' })
+			scroller.scrollTo({ top: scroller.scrollHeight, behavior: 'smooth' })
 		);
-		watch.observe(content!);
+		watch.observe(content);
 		return () => watch.disconnect();
 	});
 </script>
 
-<!-- top: false when the question text is its own line above -->
-{#snippet question(key: Key, before: string, wrong = 'not quite', top = true, feedback = true)}
+{#snippet question(key: Key, text: string, feedback = true)}
 	<form
 		class="flex flex-wrap items-center gap-3 text-red"
 		onsubmit={(e) => {
+		//what was this for again
 			e.preventDefault();
 			checked[key] = true;
 		}}
 	>
-		<span>{@html chem(before)}</span>
-		<!-- locked once it's right -->
+		<span>{@html chem(text)}</span>
+		<!-- locked once its right
+		bind ex: answers.log = input
+		disable when solved
+		remove not quite when typing
+	    -->
 		<input
 			bind:value={answers[key]}
 			oninput={() => (checked[key] = false)}
@@ -87,14 +98,14 @@
 		{/if}
 	</form>
 	{#if feedback}
-		{@render miss(key, wrong)}
+		{@render miss(key)}
 	{/if}
 {/snippet}
 
 <!-- wrong shows up where correct would -->
-{#snippet miss(key: Key, wrong = 'not quite')}
+{#snippet miss(key: Key)}
 	{#if checked[key] && !right(key)}
-		<p class="text-red" in:fade>{wrong}</p>
+		<p class="text-red" in:fade>not quite</p>
 	{/if}
 {/snippet}
 
@@ -123,7 +134,7 @@
 			<b>{decimal(1 + dilutions)} M</b>
 		</div>
 
-		<!-- beaker w/btn -->
+		<!-- beaker w/btn (vibecoded mess fix later) -->
 		<div class="flex flex-col items-center gap-3 short:gap-2">
 			<!-- black glass -->
 			<svg
@@ -151,7 +162,7 @@
 			</div>
 		</div>
 
-		<!-- sss -->
+		<!-- table! -->
 		<table class="mt-4 text-3xl short:mt-2 short:text-lg">
 			<colgroup>
 				<col style:width="calc(9ch + 2rem)" />
@@ -165,12 +176,13 @@
 					<th class="px-4 pb-1 font-normal">pH</th>
 				</tr>
 			</thead>
+			<!-- id is important cause of the fade!!! https://svelte.dev/tutorial/svelte/keyed-each-blocks -->
 			<tbody>
 				{#each rows as row, i (row.conc)}
 					<tr in:fade={{ duration: 400 }}>
 						<td class="px-4 font-semibold tabular-nums">{row.conc}</td>
-						<!-- power + pH go red together, a row at a time from the top -->
-						<!-- only the power goes red, not the 10 -->
+						<!-- power + pH turn red together one row at a time from top
+						 only the power turns red-->
 						<td class="px-4">
 							10<sup
 								class="transition-colors duration-500 {step >= 1 ? 'text-red' : ''}"
@@ -221,11 +233,7 @@
 					<p>
 						{@html chem('A small change in pH is a big change in acidity.')}
 					</p>
-					{@render question(
-						'times',
-						'How many times more H3O+ is there at pH 1 than at pH 4?',
-						'count the dilutions in between'
-					)}
+					{@render question('times', 'How many times more H3O+ is there at pH 1 than at pH 4?')}
 					{#if solved('times')}
 						{@render correct('Three tenfold dilutions gets you from pH 1 to 4 (10*10*10 = 1000)')}
 						<hr class="divider" />
@@ -247,7 +255,7 @@
 						{@render correct('log(0.001) = log(10<sup>−3</sup>) = −3')}
 						<hr class="divider" />
 						<p in:fade class="text-red">Find the pH of a 0.0000000000000000000001 M solution.</p>
-						{@render question('ph6', 'pH =', 'not quite', false)}
+						{@render question('ph6', 'pH =')}
 					{/if}
 					{#if solved('ph6')}
 						{@render correct('')}
@@ -281,7 +289,7 @@
 							'0.003 is between 0.01 (10<sup>−2</sup>) and 0.001 (10<sup>−3</sup>), so its pH is between 2 and 3.'
 						)}
 						<p in:fade class="mt-4 text-red">Use a calculator to find the exact pH:</p>
-						{@render question('calc', 'pH =', 'not quite', false)}
+						{@render question('calc', 'pH =')}
 					{/if}
 					{#if solved('calc')}
 						{@render correct('')}
@@ -293,15 +301,15 @@
 			<!-- bases + pOH -->
 			{#if solved('calc')}
 				<div in:fade class="flex flex-col gap-3">
-					<p>{@html chem('Bases are similar: <b>pOH = −log[OH−]</b>')}</p>
+					<p>{@html chem('Bases are similar: <b>pOH = −log[OH-]</b>')}</p>
 					<p class="mt-4">
-						{@html chem('K<sub>w</sub> = [H3O+][OH−] = 1.0 × 10<sup>−14</sup> at 25 °C.')}
+						{@html chem('K<sub>w</sub> = [H3O+][OH-] = 1.0 × 10<sup>−14</sup> at 25 °C.')}
 					</p>
 					<p class="text-red">What is pH + pOH always equal to?</p>
-					{@render question('sum', 'pH + pOH =', 'not quite', false, false)}
+					{@render question('sum', 'pH + pOH =', false)}
 					<!-- hint -->
 					{#if hint}
-						<p in:fade class="text-lg text-subtext0">log(a × b) = log a + log b</p>
+						<p in:fade class="text-lg text-subtext0">log(a x b) = log a + log b</p>
 					{:else}
 						<button
 							class="w-fit text-left text-lg text-blue underline underline-offset-4"
@@ -313,7 +321,7 @@
 					{@render miss('sum')}
 					{#if solved('sum')}
 						{@render correct(
-							'−log[H3O+] + (−log[OH−]) = −log(10<sup>−14</sup>), so <b>pH + pOH = 14</b> at 25 °C.'
+							'−log[H3O+] + (−log[OH-]) = −log(10<sup>−14</sup>), so <b>pH + pOH = 14</b> at 25 °C.'
 						)}
 					{/if}
 				</div>

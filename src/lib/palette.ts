@@ -18,22 +18,22 @@ export type Accent = (typeof accents)[number];
 
 export const colors = [
 	...accents,
-	...accents.map((a) => `${a}-light` as const),
-	...accents.map((a) => `${a}-dark` as const),
+	...accents.map((a) => `${a}-light`),
+	...accents.map((a) => `${a}-dark`),
 	'overlay2',
 	'overlay1',
 	'overlay0',
 	'surface2',
 	'surface1',
 	'surface0'
-] as const;
+];
 export type Color = (typeof colors)[number];
 
-export function tint(color: Accent): string {
+export function tint(color: Accent) {
 	return `color-mix(in oklab, var(--color-${color}) 18%, var(--color-base))`;
 }
 
-// pH colours like universal indicator: red acid, green neutral, purple base
+// pH colours: red acid, green neutral, purple base
 export const phStops: [number, Accent][] = [
 	[0, 'red'],
 	[3, 'peach'],
@@ -43,8 +43,8 @@ export const phStops: [number, Accent][] = [
 	[14, 'mauve']
 ];
 
-// css colour for a pH, under 0 goes from red to dark red at −2
-export function phColor(pH: number): string {
+// returns colour ( continuous, from -2 to 14)
+export function phColor(pH: number) {
 	if (pH < 0)
 		return `color-mix(in oklab, var(--color-red-dark) ${Math.min(1, -pH / 2) * 100}%, var(--color-red))`;
 	const i = Math.max(

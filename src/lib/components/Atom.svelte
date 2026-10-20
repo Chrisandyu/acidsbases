@@ -8,7 +8,7 @@
 		y: number;
 		r: number;
 		color: Color;
-		// atom charge like H+ or Cl−
+		// atom charge like H+ or Cl-
 		charge?: string;
 	};
 

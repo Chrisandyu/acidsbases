@@ -1,18 +1,15 @@
 <script lang="ts">
 	import Button from '$lib/components/Button.svelte';
-	import type { ComponentProps } from 'svelte';
-	import type Atom from '$lib/components/Atom.svelte';
 	import Molecule, { type Bond } from '$lib/components/Molecule.svelte';
 	import { molecules } from '$lib/molecules';
 	import { colors, type Color } from '$lib/palette';
 	import { svgPoint } from '$lib/svg';
 
 	let mode = $state<'atoms' | 'bonds'>('atoms');
-	let atoms = $state<ComponentProps<typeof Atom>[]>([]);
+	let atoms = $state([]);
 	let bonds = $state<Bond[]>([]);
 	let charge = $state('');
-	let selected = $state<{ type: 'atom' | 'bond'; i: number } | null>(null);
-
+	let selected = $state(null);
 
 	let draft = $state<{ symbol: string; r: number; color: Color }>({
 		symbol: '',
@@ -25,7 +22,7 @@
 	const order = $derived(selected?.type === 'bond' ? bonds[selected.i].order : draftOrder);
 
 	let svg = $state<SVGSVGElement>();
-	let drag: { dx: number; dy: number } | null = null;
+	let drag = null;
 	let drawing = false;
 
 	function onBackground(e: PointerEvent) {
@@ -33,22 +30,22 @@
 			selected = null;
 			return;
 		}
-		const p = svgPoint(svg!, e);
+		const p = svgPoint(svg, e);
 		if (mode === 'atoms') {
 			atoms.push({ ...draft, ...p });
 		} else {
 			bonds.push({ x1: p.x, y1: p.y, x2: p.x, y2: p.y, order: draftOrder });
 			drawing = true;
-			svg!.setPointerCapture(e.pointerId);
+			svg.setPointerCapture(e.pointerId);
 		}
 	}
 
 	function onAtom(e: PointerEvent, i: number) {
 		e.stopPropagation();
 		selected = { type: 'atom', i };
-		const p = svgPoint(svg!, e);
+		const p = svgPoint(svg, e);
 		drag = { dx: p.x - atoms[i].x, dy: p.y - atoms[i].y };
-		svg!.setPointerCapture(e.pointerId);
+		svg.setPointerCapture(e.pointerId);
 	}
 
 	function onBond(e: PointerEvent, i: number) {
@@ -57,11 +54,8 @@
 	}
 
 	function onMove(e: PointerEvent) {
-		const p = svgPoint(svg!, e);
-		if (drawing) {
-			bonds[bonds.length - 1].x2 = p.x;
-			bonds[bonds.length - 1].y2 = p.y;
-		}
+		const p = svgPoint(svg, e);
+
 		if (drag && selected) {
 			atoms[selected.i].x = p.x - drag.dx;
 			atoms[selected.i].y = p.y - drag.dy;
@@ -82,24 +76,24 @@
 	}
 
 	function remove() {
-		(selected!.type === 'atom' ? atoms : bonds).splice(selected!.i, 1);
+		(selected.type === 'atom' ? atoms : bonds).splice(selected.i, 1);
 		selected = null;
 	}
 
 	function toFront() {
-		atoms.push(...atoms.splice(selected!.i, 1));
+		atoms.push(...atoms.splice(selected.i, 1));
 		selected = { type: 'atom', i: atoms.length - 1 };
 	}
 
 	function toBack() {
-		atoms.unshift(...atoms.splice(selected!.i, 1));
+		atoms.unshift(...atoms.splice(selected.i, 1));
 		selected = { type: 'atom', i: 0 };
 	}
 
 	let loaded = $state('');
 
 	function load() {
-		const m: ComponentProps<typeof Molecule> = molecules[loaded as keyof typeof molecules];
+		const m = molecules[loaded];
 		atoms = m.atoms.map((a) => ({ ...a }));
 		bonds = (m.bonds ?? []).map((b) => ({ ...b }));
 		charge = m.charge ?? '';

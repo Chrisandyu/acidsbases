@@ -118,7 +118,7 @@
 <!-- WATER -->
 <div class="relative z-10 flex h-full w-full gap-12 short:gap-8">
 	<!--fixed width-->
-	<div class="flex w-[30rem] shrink-0 flex-col items-center gap-4 short:w-[26rem] short:gap-2">
+	<div class="flex w-[30rem] shrink-0 flex-col items-center gap-4 short:w-[22rem] short:gap-2">
 		<!-- mol / volume = concentration-->
 		<div class="flex items-center gap-3 text-xl text-black short:text-lg">
 			<span class="flex flex-col items-center leading-tight">

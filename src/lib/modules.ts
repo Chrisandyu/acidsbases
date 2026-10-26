@@ -31,7 +31,7 @@ export const modules: Module[] = [
 		slug: 'buffers',
 		title: 'Buffers',
 		color: 'mauve',
-		screens: [{ slug: 'test', title: 'blooooooood' }]
+		screens: [{ slug: 'blood', title: 'Blood' }]
 	},
 	{
 		slug: 'titrations',

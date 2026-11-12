@@ -25,7 +25,12 @@ export const modules: Module[] = [
 		slug: 'strongweak',
 		title: 'Strong vs weak',
 		color: 'peach',
-		screens: [{ slug: 'test', title: 'soooooo....' }]
+		screens: [
+			{ slug: 'strength', title: 'Strong and weak' },
+			{ slug: 'ka', title: 'Ka and Kb' },
+			{ slug: 'pka', title: 'Ka, pKa' },
+			{ slug: 'proof', title: 'Ka × Kb = Kw' }
+		]
 	},
 	{
 		slug: 'buffers',

@@ -10,9 +10,11 @@
 		color: Color;
 		// atom charge like H+ or Cl-
 		charge?: string;
+		// outline thickness
+		stroke?: number;
 	};
 
-	let { symbol, x, y, r, color, charge }: Props = $props();
+	let { symbol, x, y, r, color, charge, stroke = 3 }: Props = $props();
 
 	const id = $props.id();
 	const c = $derived(`var(--color-${color})`);
@@ -31,7 +33,7 @@
 		fill="color-mix(in oklab, {c}, white 30%)"
 		clip-path="url(#{id})"
 	/>
-	<circle {r} fill="none" stroke={dark} stroke-width="3" />
+	<circle {r} fill="none" stroke={dark} stroke-width={stroke} />
 
 	<text
 		text-anchor="middle"

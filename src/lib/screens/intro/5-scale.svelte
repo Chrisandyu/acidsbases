@@ -2,7 +2,7 @@
 	import { fade } from 'svelte/transition';
 	import { Tween } from 'svelte/motion';
 	import { cubicInOut } from 'svelte/easing';
-	import Button from '$lib/components/Button.svelte';
+	import ArrowButton from '$lib/components/ArrowButton.svelte';
 	import { chem } from '$lib/chem';
 	import { phColor } from '$lib/palette';
 	import stomach from '$lib/assets/stomach.png';
@@ -217,7 +217,7 @@ snippet > component justifiable??
 			{#if moved}
 			    <!-- not clicked and not moved -->
 				<div in:fade class="flex justify-center">
-					<Button variant="ghost" size="sm" onclick={end}>→</Button>
+					<ArrowButton onclick={end} />
 				</div>
 			{:else}
 				<p class="text-center text-lg text-subtext1">drag the marker to move on</p>

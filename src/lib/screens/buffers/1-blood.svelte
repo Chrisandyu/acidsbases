@@ -12,8 +12,7 @@
   const steps = [
   	{ loop: 'flow', text: '<b class="text-protein">Proteins</b> inn blood keep their shape between pH 7.35 - 7.45', button: 'add acid' },
   	{ once: 'acid-nobuff', loop: 'denatured', text: 'a', button: 'add a buffer' },
-  	{ loop: 'flow-buff', text: 'a', button: 'add acid' },
-  	{ once: 'acid-buff', loop: 'flow-buff', text: 'a', button: 'add base' },
+  	{ once: 'buff', loop: 'flow-buff', text: 'a', button: 'add acid' },
   	{ once: 'base-buff', loop: 'flow-buff', text: 'a', button: null }
   ];
 
@@ -30,6 +29,8 @@
 	let current = $state('flow');
 	// true while a play once clip is playing  (make buttons wait)
 	let playing = $state(false);
+	// step to go to once the loop reaches its last frame so cut doesn't show
+	let waitingFor = $state(null);
 
 	const videos: Record<string, HTMLVideoElement> = {};
 
@@ -57,6 +58,23 @@
 		} else show(s.loop);
 	}
 
+	// button: let the loop finish first
+	function next() {
+		if (videos[current].error) goTo(step + 1);
+		else waitingFor = step + 1;
+	}
+
+	function onEnded() {
+		if (waitingFor !== null) {
+			const n = waitingFor;
+			waitingFor = null;
+			goTo(n);
+		} else {
+			show(steps[step].loop);
+			playing = false;
+		}
+	}
+
 	//effect reruns cause it looks for state inside functions??????
 	onMount(() => goTo(0));
 
@@ -68,11 +86,8 @@ fit height to screen -->
 	<video
 		bind:this={videos[name]}
 		src="/videos/blood/{name}.mp4"
-		loop={name === steps[step].loop}
-		onended={() => {
-		    show(steps[step].loop)
-			playing = false;
-		}}
+		loop={name === steps[step].loop && waitingFor === null}
+		onended={onEnded}
 		muted
 		playsinline
 		preload="auto"
@@ -88,9 +103,9 @@ fit height to screen -->
 	{#key step}
 		<p in:fade>{@html chem(steps[step].text)}</p>
 	{/key}
-	{#if steps[step].button && !playing}
+	{#if steps[step].button && !playing && waitingFor === null}
 		<div in:fade>
-			<Button color="mauve" size="sm" onclick={() => goTo(step + 1)}>{steps[step].button}</Button>
+			<Button color="mauve" size="sm" onclick={next}>{steps[step].button}</Button>
 		</div>
 	{/if}
 </div>

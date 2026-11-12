@@ -7,7 +7,7 @@
 @theme static {
 	--font-sans: 'Cascadia Code Variable', monospace;
 
-	/* so why does css not accept british colour but i can use british grey */
+	/* i can use grey but why not colour */
 	--color-rosewater: #dc8a78;
 	--color-flamingo: #dd7878;
 	--color-pink: #ea76cb;
@@ -25,8 +25,8 @@
 	--color-protein: #071371; /* protein blue in the blood animation */
 
 	--color-text: #4c4f69;
-	--color-subtext1: #5c5f77;
-	--color-subtext0: #6c6f85;
+	--color-subtext1: #4a4d65;
+	--color-subtext0: #52556c;
 
 	--color-overlay2: #7c7f93;
 	--color-overlay1: #8c8fa1;
@@ -40,7 +40,7 @@
 	--color-mantle: #e6e9ef;
 	--color-crust: #dce0e8;
 
-	/* light and dark version of each accent */
+	/* light and dark ver of each accent */
 	--color-rosewater-light: #eec4bc;
 	--color-flamingo-light: #eebcbc;
 	--color-pink-light: #f4bae5;

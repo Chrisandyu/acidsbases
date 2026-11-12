@@ -2,7 +2,7 @@
 	import { Tween } from 'svelte/motion';
 	import { cubicInOut } from 'svelte/easing';
 	import Atom from '$lib/components/Atom.svelte';
-	import Button from '$lib/components/Button.svelte';
+	import ArrowButton from '$lib/components/ArrowButton.svelte';
 	import Charge from '$lib/components/Charge.svelte';
 	import Caption from '$lib/components/Caption.svelte';
 	import Molecule from '$lib/components/Molecule.svelte';
@@ -127,9 +127,7 @@
 
 		<div class="flex w-md flex-col items-center gap-4">
 			<Caption text={captions[stage]} />
-			<Button variant="ghost" size="sm" onclick={() => goTo((stage + 1 < captions.length ? stage + 1 : 0), true)}>
-				→
-			</Button>
+			<ArrowButton onclick={() => goTo((stage + 1 < captions.length ? stage + 1 : 0), true)} />
 		</div>
 	</div>
 

@@ -2,6 +2,7 @@
 	import { fade } from 'svelte/transition';
 	import { Tween } from 'svelte/motion';
 	import Button from '$lib/components/Button.svelte';
+	import ArrowButton from '$lib/components/ArrowButton.svelte';
 	import BeakerPour from '$lib/components/BeakerPour.svelte';
 	import { chem } from '$lib/chem';
 
@@ -216,9 +217,9 @@
 
 			{#if step === 0}
 				{#if dilutions < 3}
-					<p class="text-lg text-subtext0">dilute to pH 4 to move on</p>
+					<p class="text-subtext0">dilute to pH 4 to move on</p>
 				{:else}
-					<div in:fade><Button variant="ghost" size="sm" onclick={() => step++}>→</Button></div>
+					<div in:fade><ArrowButton onclick={() => step++} /></div>
 				{/if}
 			{/if}
 

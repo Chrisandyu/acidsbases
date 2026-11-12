@@ -1,7 +1,7 @@
 const isLetter = (c: string) => c.toLowerCase() !== c.toUpperCase();
 const isDigit = (c: string) => c >= '0' && c <= '9';
 const isCharge = (c: string) => c === '+' || c === '-'; //hyphen
-const isWordEnd = (c: string | undefined) => c === undefined || ' .,;:!?)]('.includes(c); // brackets so [H3O+] and OH-(aq) work
+const isWordEnd = (c: string | undefined) => c === undefined || ' .,;:!?)](<'.includes(c); // brackets so [H3O+] and OH-(aq) work, < so <b>OH-</b> works
 
 // plain formulas -> sub/superscripts for chem formulas
 // numbers after a letter or ) are sub H2O -> use your imagination

@@ -1,5 +1,5 @@
 <script lang="ts">
-    //code is same as 1
+	//code is same as 1
 	import { Tween } from 'svelte/motion';
 	import { cubicInOut } from 'svelte/easing';
 	import Atom from '$lib/components/Atom.svelte';
@@ -7,6 +7,7 @@
 	import Molecule from '$lib/components/Molecule.svelte';
 	import WaterField from '$lib/components/WaterField.svelte';
 	import { chem } from '$lib/chem';
+	import Fraction from '$lib/components/Fraction.svelte';
 	import { molecules } from '$lib/molecules';
 
 	const [hLeft, proton, oxygen] = molecules.water1.atoms;
@@ -88,7 +89,10 @@
 
 <svelte:window onresize={measure} onclick={() => (lines = total)} />
 
-<WaterField {level} />
+<!-- full screen behind everything, screen is rel z-10 -->
+<div class="pointer-events-none fixed inset-0">
+	<WaterField {level} />
+</div>
 
 <!-- z-67 soooooo -->
 <div class="relative z-67 flex h-full w-full flex-col">
@@ -132,18 +136,18 @@
 		>
 			<span class="font-bold">K</span>
 			<span>=</span>
-			<span class="relative flex flex-col items-center">
-				<span>{@html chem('[H3O+][OH-]')}</span>
-				<span class="relative border-t-2 border-black px-2">
+			<Fraction>
+				{#snippet top()}{@html chem('[H3O+][OH-]')}{/snippet}
+				{#snippet bottom()}
 					{@html chem('[H2O]<sup>2</sup>')}
 					<span
-						class="absolute top-[65%] -left-1 h-1 w-[calc(100%+0.5rem)] origin-left -rotate-6 rounded-full bg-red opacity-50 transition-transform delay-700 duration-500 {lines >=
+						class="absolute top-[60%] -left-1 h-1 w-[calc(100%+0.5rem)] origin-left -rotate-6 rounded-full bg-red opacity-50 transition-transform delay-700 duration-500 {lines >=
 						3
 							? 'scale-x-100'
 							: 'scale-x-0'}"
 					></span>
-				</span>
-			</span>
+				{/snippet}
+			</Fraction>
 			<span>=</span>
 			<span>{@html chem('[H3O+][OH-]')}</span>
 			<span>=</span>

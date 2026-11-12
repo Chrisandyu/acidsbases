@@ -1,6 +1,14 @@
 <script lang="ts">
-	// level = screen y (px) where the water surface is
-	let { level }: { level: number } = $props();
+	import { untrack } from 'svelte';
+
+	// fills its parent box. level = px from the top of that box where the water surface is
+	// draw: optional, draws extra stuff (particles) into the water each frame. it's clipped to the water,
+	// and surface(x) gives the surface's y at x so things can stay under it
+	type Props = {
+		level: number;
+		draw?: (ctx: CanvasRenderingContext2D, surface: (x: number) => number) => void;
+	};
+	let { level, draw }: Props = $props();
 
 	const gap = 8; // px between surface points
 	const spread = 0.2; // how fast waves travel sideways (over 0.5 blows up)
@@ -13,10 +21,13 @@
 	let canvas = $state<HTMLCanvasElement>();
 	let size = $state({ w: 0, h: 0 });
 
-	function resize() {
-		size = { w: window.innerWidth, h: window.innerHeight };
-	}
-	$effect(resize);
+	// follow the parent box's size
+	$effect(() => {
+		const box = canvas.parentElement;
+		const watch = new ResizeObserver(() => (size = { w: box.clientWidth, h: box.clientHeight }));
+		watch.observe(box);
+		return () => watch.disconnect();
+	});
 
 	// surface is a row of points, each with a height (+ = down) and a speed.
 	// every point pulls on its neighbours so a poke spreads out as waves
@@ -31,7 +42,13 @@
 		// null until the mouse first moves, so it dont jump in from nowhere on page load
 		let mouse: { x: number; y: number } | null = null;
 		let last: { x: number; y: number } | null = null;
-		const onMove = (e: PointerEvent) => (mouse = { x: e.clientX, y: e.clientY });
+		// mouse relative to this box, null when it's outside so other boxes' water doesn't move
+		const onMove = (e: PointerEvent) => {
+			const box = canvas.getBoundingClientRect();
+			const x = e.clientX - box.left;
+			const y = e.clientY - box.top;
+			mouse = x >= 0 && x <= w && y <= h ? { x, y } : null;
+		};
 		const clamp = (v: number, max: number) => Math.max(-max, Math.min(max, v));
 		window.addEventListener('pointermove', onMove);
 
@@ -104,6 +121,20 @@
 			ctx.fillStyle = fill;
 			ctx.fill();
 
+			// extra stuff, only shows inside the water
+			if (draw) {
+				// surface y between two points
+				const surface = (x: number) => {
+					const i = Math.max(0, Math.min(count - 1.001, x / gap));
+					const k = Math.floor(i);
+					return y(k) + (y(k + 1) - y(k)) * (i - k);
+				};
+				ctx.save();
+				ctx.clip();
+				draw(ctx, surface);
+				ctx.restore();
+			}
+
 			// the surface is the line between the top and the water
 			ctx.beginPath();
 			ctx.moveTo(0, y(0));
@@ -115,7 +146,9 @@
 
 			raf = requestAnimationFrame(frame);
 		}
-		raf = requestAnimationFrame(frame);
+		// draw straight away, resizing wipes the canvas and waiting a frame flashes it blank.
+		// untrack or the effect starts watching whatever draw reads (the tweens) and restarts every tick
+		untrack(() => frame(performance.now()));
 
 		return () => {
 			cancelAnimationFrame(raf);
@@ -124,7 +157,5 @@
 	});
 </script>
 
-<svelte:window onresize={resize} />
-
-<!-- screen is rel z-10-->
-<canvas bind:this={canvas} class="pointer-events-none fixed inset-0 h-full w-full"></canvas>
+<!-- fills the parent, which needs to be relative/absolute/fixed -->
+<canvas bind:this={canvas} class="pointer-events-none absolute inset-0 h-full w-full"></canvas>

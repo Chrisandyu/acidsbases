@@ -39,8 +39,8 @@
 	<header class="relative z-10 flex items-start justify-between gap-8 px-10 pt-8">
 		<!--title group -->
 		<a href="/" class="group block space-y-1">
-			<span class="block text-subtext0 group-hover:opacity-90">{module.title}</span>
-			<h1 class="text-4xl font-bold group-hover:opacity-90">{module.screens[step].title}</h1>
+			<span class="block text-black/75 group-hover:opacity-90">{module.title}</span>
+			<h1 class="text-4xl font-bold text-black/85 group-hover:opacity-90">{module.screens[step].title}</h1>
 		</a>
 		<!-- update progress bar so current screen ishighlighted? -->
 		<div class="flex gap-2 pt-2">

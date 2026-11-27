@@ -5,7 +5,7 @@
 	let { text }: { text: string } = $props();
 </script>
 
-<div class="grid text-center text-2xl">
+<div class="grid text-center text-2xl text-black">
 	{#key text}
 		<p class="col-start-1 row-start-1" transition:fade={{ duration: 400 }}>{@html chem(text)}</p>
 	{/key}

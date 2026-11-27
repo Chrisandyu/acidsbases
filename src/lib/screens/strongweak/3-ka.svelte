@@ -13,8 +13,8 @@
 		text: string; // text-red / text-blue
 		border: string;
 		species: string[]; // reactant, H2O, product, product
-		answers: (string | null)[]; // null = still a blank
-		drafts: string[]; // what's typed so far, just for the ? placeholder
+		answers: (string | null)[]; // null = still blank
+		drafts: string[]; // whats typed so far
 		note: string;
 	};
 
@@ -61,7 +61,7 @@
 		return side.map((i) => p.species[i]).filter((s) => !p.answers.includes(s));
 	}
 
-	// our own blinking cursor (the real one is hidden). it always sits at the end of the text,
+	// our own it always sits at the end of the text,
 	// x = px from the box's left edge. empty box = middle
 	let caret = $state<{ k: string; j: number; x: number } | null>(null);
 
@@ -210,7 +210,7 @@
 		{:else}
 			<!-- K fades in once the reaction is built -->
 			<div in:fade={{ duration: 800, delay: 300 }} class="flex flex-col items-center gap-2">
-				<div class="rounded-xl border-3 px-7 py-4 text-4xl short:text-3xl {p.border}">
+				<div class="rounded-xl border-3 px-7 py-4 text-3xl short:text-2xl {p.border}">
 					<b class={p.text}>K<sub>{p.k}</sub></b> =
 					<Fraction>
 						{#snippet top()}{@html chem(`[${p.species[2]}][${p.species[3]}]`)}{/snippet}

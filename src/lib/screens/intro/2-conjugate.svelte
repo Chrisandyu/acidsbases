@@ -173,6 +173,7 @@
 						? 'mb-6 h-8'
 						: 'mb-6 h-8 opacity-0'}"
 				class:text-red={wrong}
+				class:text-black={!wrong && !(solved && step < 4)}
 				class:text-green={solved && step < 4}
 				class:font-bold={solved && step < 4}
 			>

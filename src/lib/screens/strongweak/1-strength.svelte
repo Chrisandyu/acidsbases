@@ -210,11 +210,11 @@
 			<p>Sort of:</p>
 			<p>
 				{@html chem(
-					'The bronsted lowry def of a base is that it accepts H+. However, strong bases make OH- in two different ways:'
+					'Even though that\'s the bronsted lowry def, this def of all the molecules producing OH still fits it. <br> There are two types of strong bases:'
 				)}
 			</p>
 
-			<p class="font-bold">{@html chem('1. They release OH-')}</p>
+			<p class="font-bold">{@html chem('1. Those that release OH-')}</p>
 			<p class="eq">{@html chem('NaOH → Na+ + OH-')}</p>
 			<p>
 				{@html chem(
@@ -222,14 +222,18 @@
 				)}
 			</p>
 			<p class="eq">{@html chem('OH- + H3O+ → 2H2O')}</p>
-			<p>{@html chem('(Na+ is a spectator ion)')}</p>
 
-			<p class="font-bold">{@html chem('2. They take H+ from water and leave OH-')}</p>
+			<p class="font-bold">{@html chem('2. Those that take H+ from water to make OH-')}</p>
 			<p class="eq">{@html chem('O^2- + H2O → 2OH-')}</p>
 			<p>
 				{@html chem(
 					'Here, the bronsted lowry def is followed, since O^2- takes a proton from water and makes OH- (Yes, OH- is also a base, but it’s just weaker. Every acid-base reaction will create a new acid and base [the concept of conjugate pairs]).'
 				)}
+			</p>
+
+
+			<p>
+
 			</p>
 			<p>This definition includes both #1 and #2</p>
 

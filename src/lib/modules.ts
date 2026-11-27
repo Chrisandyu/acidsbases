@@ -27,9 +27,13 @@ export const modules: Module[] = [
 		color: 'peach',
 		screens: [
 			{ slug: 'strength', title: 'Strong and weak' },
+			{ slug: 'addacid', title: 'Adding a strong acid' },
 			{ slug: 'ka', title: 'Ka and Kb' },
 			{ slug: 'pka', title: 'Ka, pKa' },
-			{ slug: 'proof', title: 'Ka × Kb = Kw' }
+			{ slug: 'proof', title: 'Ka × Kb = Kw' },
+			{ slug: 'relative', title: 'Prediction' },
+			{ slug: 'percent', title: 'Percent ionisation' },
+			{ slug: 'ice', title: 'ICE tables' }
 		]
 	},
 	{

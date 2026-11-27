@@ -5,10 +5,10 @@
 	import Fraction from '$lib/components/Fraction.svelte';
 	import { chem } from '$lib/chem';
 
-	// big Ka = strong -> log + -log graphs -> so low pKa = strong -> try the proof.
+	// big Ka = strong -> log + -log graphs -> so low pKa = strong
 	// each step gets added below the last one, so nothing above it moves and there's no blank space to scroll
 	let step = $state(0);
-	const last = 3;
+	const last = 2;
 
 	// next step + scroll it into view
 	let root = $state<HTMLDivElement>();
@@ -151,28 +151,11 @@
 			</section>
 		{/if}
 
-		<!-- 3: they try it here, the proof is the next page -->
-		{#if step >= 3}
-			<div in:fade={{ duration: 500 }} data-step="3" class="flex flex-col gap-10 short:gap-6">
-				<hr class="rounded-full border-t-3 border-text" />
-				<div class="flex flex-col items-center gap-2 text-center font-bold">
-					<p>From the equilibrium expressions, try to prove:</p>
-					<p>
-						<span class="text-red">K<sub>a</sub></span> ×
-						<span class="text-blue">K<sub>b</sub></span> = K<sub>w</sub>
-					</p>
-					<p>
-						<span class="text-red">pK<sub>a</sub></span> +
-						<span class="text-blue">pK<sub>b</sub></span> = 14
-					</p>
-					<p>at 25 °C</p>
-				</div>
+		<!-- under whatever's showing -->
+		{#if step < last}
+			<div class="mx-auto">
+				<ArrowButton onclick={next} />
 			</div>
 		{/if}
-
-		<!-- in the footer between back + next, always on screen and never over the content -->
-		<div class="fixed bottom-8 left-1/2 z-20 -translate-x-1/2 {step < last ? '' : 'invisible'}">
-			<ArrowButton onclick={next} />
-		</div>
 	</div>
 </div>

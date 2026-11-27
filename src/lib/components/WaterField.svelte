@@ -6,9 +6,10 @@
 	// and surface(x) gives the surface's y at x so things can stay under it
 	type Props = {
 		level: number;
+		motion?: number; // 0 = flat still water, 1 = normal
 		draw?: (ctx: CanvasRenderingContext2D, surface: (x: number) => number) => void;
 	};
-	let { level, draw }: Props = $props();
+	let { level, motion = 1, draw }: Props = $props();
 
 	const gap = 8; // px between surface points
 	const spread = 0.2; // how fast waves travel sideways (over 0.5 blows up)
@@ -19,7 +20,15 @@
 	const maxHeight = 200; // px the surface can go above or below level
 
 	let canvas = $state<HTMLCanvasElement>();
+	// level + motion get read every frame so they can change without restarting the waves
+	const on = $derived(level > 0);
 	let size = $state({ w: 0, h: 0 });
+
+	// push the surface between x0 and x1 (px), + = down. for stuff going in/out of the water
+	let push: ((x0: number, x1: number, v: number) => void) | null = null;
+	export function poke(x0: number, x1: number, v: number) {
+		push?.(x0, x1, v);
+	}
 
 	// follow the parent box's size
 	$effect(() => {
@@ -33,11 +42,20 @@
 	// every point pulls on its neighbours so a poke spreads out as waves
 	$effect(() => {
 		const { w, h } = size;
-		if (!w || !level) return;
+		if (!w || !on) return;
 
 		const count = Math.ceil(w / gap) + 1;
 		const height = new Float32Array(count);
 		const speed = new Float32Array(count);
+		// soft at the ends so it makes a smooth bump not a box
+		push = (x0, x1, v) => {
+			const pad = (x1 - x0) * 0.25;
+			const [l, r] = [x0 - pad, x1 + pad];
+			for (let i = Math.max(0, Math.floor(l / gap)); i <= Math.min(count - 1, r / gap); i++) {
+				const t = (i * gap - l) / (r - l);
+				speed[i] += v * motion * (0.5 - 0.5 * Math.cos(2 * Math.PI * t));
+			}
+		};
 
 		// null until the mouse first moves, so it dont jump in from nowhere on page load
 		let mouse: { x: number; y: number } | null = null;
@@ -55,7 +73,7 @@
 		function step() {
 			// mouse in the water drags the surface with it
 			// down up pushes sideways makes a wave
-			if (mouse && last) {
+			if (mouse && last && motion > 0) {
 				const dx = clamp(mouse.x - last.x, maxMove);
 				const dy = clamp(mouse.y - last.y, maxMove);
 				const centre = Math.round(mouse.x / gap);
@@ -63,7 +81,7 @@
 					for (let i = 0; i < count; i++) {
 						const off = i * gap - mouse.x;
 						const falloff = Math.max(0, 1 - Math.abs(off) / reach);
-						speed[i] += (dy * 0.05 - dx * 0.02 * Math.sign(off)) * falloff;
+						speed[i] += (dy * 0.05 - dx * 0.02 * Math.sign(off)) * falloff * motion;
 					}
 				}
 			}
@@ -92,10 +110,6 @@
 		const edge = getComputedStyle(document.documentElement)
 			.getPropertyValue('--color-sapphire')
 			.trim();
-		// hex + alpha, canvas can't always read color-mix
-		const fill = ctx.createLinearGradient(0, level, 0, h);
-		fill.addColorStop(0, `${edge}40`);
-		fill.addColorStop(1, `${edge}73`);
 
 		// physics runs at 60 fps
 		let raf = 0;
@@ -109,7 +123,8 @@
 			// slow swell on top so it never looks frozen
 			const t = now / 1000;
 			const y = (i: number) =>
-				level + height[i] + 3 * Math.sin(t * 0.9 + i * 0.08) + 2 * Math.sin(t * 1.4 - i * 0.05);
+				level +
+				motion * (height[i] + 3 * Math.sin(t * 0.9 + i * 0.08) + 2 * Math.sin(t * 1.4 - i * 0.05));
 
 			ctx.clearRect(0, 0, w, h);
 			ctx.beginPath();
@@ -118,6 +133,10 @@
 			ctx.lineTo(w, h);
 			ctx.lineTo(0, h);
 			ctx.closePath();
+			// hex + alpha, canvas can't always read color-mix
+			const fill = ctx.createLinearGradient(0, level, 0, h);
+			fill.addColorStop(0, `${edge}40`);
+			fill.addColorStop(1, `${edge}73`);
 			ctx.fillStyle = fill;
 			ctx.fill();
 
@@ -153,6 +172,7 @@
 		return () => {
 			cancelAnimationFrame(raf);
 			window.removeEventListener('pointermove', onMove);
+			push = null;
 		};
 	});
 </script>
